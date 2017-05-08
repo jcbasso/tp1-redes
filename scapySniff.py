@@ -45,9 +45,11 @@ def Scallback(pkt):
 
 def S1handler(signal, frame):
 	global macAddressDic
+	print "\n\n\n\n--------------------------------- "    
 	for macAddress in macAddressDic:
 	    print str(macAddress) + " :"
 	    print "   #Veces: " + str(macAddressDic[macAddress])
+	sys.exit(0)
 
 def S1callback(pkt):
 	global macAddressDic
@@ -56,6 +58,7 @@ def S1callback(pkt):
 		macAddressDic[macAddress] += 1
 	else:
 		macAddressDic[macAddress] = 1
+	print str(macAddress) + " -> " + str(macAddressDic[macAddress])
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
@@ -64,6 +67,7 @@ def S(interfaz = "en1"):
 
 def S1(interfaz = "en1"):
 	signal.signal(signal.SIGINT, S1handler)
+	print "MacAdress -> #Veces"
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	signal.pause()
 
