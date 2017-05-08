@@ -1,10 +1,15 @@
 #! /usr/bin/env python
-from scapy.all import * 
+from scapy.all import *
 import signal
 import sys
+import argparse
 
 broadcast = 0
 unicast = 0
+
+parser = argparse.ArgumentParser(description='Sniff packages')
+
+parser.add_argument('interface', help='interface of your network')
 
 # Handler para cuando mandas sigint muestre #broadcast y #unicode
 def Shandler(signal, frame):
@@ -58,5 +63,5 @@ def S1(interfaz = "en1"):
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	#signal.pause()
 
-S()
+S(parser.parse_args().interface)
 #S1()
