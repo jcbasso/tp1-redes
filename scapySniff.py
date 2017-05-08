@@ -7,6 +7,8 @@ import argparse
 broadcast = 0
 unicast = 0
 macAddressDstDic = dict()
+ipArpSrcDic = dict()
+ipArpDstDic = dict()
 
 # Handler para cuando mandas sigint muestre #broadcast y #unicode
 def Shandler(signal, frame):
@@ -45,21 +47,49 @@ def Scallback(pkt):
 
 def S1handler(signal, frame):
 	global macAddressDstDic
+	global ipArpSrcDic
+	global ipArpDstDic
 	print "\n\n\n\n--------------------------------- "    
-	for macAddressDst in macAddressDstDic:
-		print str(macAddressDst) + " :"
-		print "   #Veces: " + str(macAddressDstDic[macAddressDst])
-		print 
+	# for macAddressDst in macAddressDstDic:
+	# 	print str(macAddressDst) + " :"
+	# 	print "   #Veces: " + str(macAddressDstDic[macAddressDst])
+	# 	print 
+
+	print "IP From : # times asking"
+	for ipArpSrc in ipArpSrcDic:
+		print str(ipArpSrc) + " : " + str(ipArpSrcDic[ipArpSrc])
+
+	print "\n"
+	print "IP looking for : # times being search"
+	for ipArpDst in ipArpDstDic:
+		print str(ipArpDst) + " : " + str(ipArpDstDic[ipArpDst])
+
 	sys.exit(0)
 
 def S1callback(pkt):
 	global macAddressDstDic
-	macAddressDst = pkt[Ether].dst
-	if macAddressDst in macAddressDstDic:
-		macAddressDstDic[macAddressDst] += 1
+	# MACADDRES DST
+	# macAddressDst = pkt[Ether].dst
+	# if macAddressDst in macAddressDstDic:
+	# 	macAddressDstDic[macAddressDst] += 1
+	# else:
+	# 	macAddressDstDic[macAddressDst] = 1
+	#print str(macAddressDst) + " : " + str(macAddressDstDic[macAddressDst])
+	
+	# ARP IP SRC
+	if pkt[ARP].psrc in ipArpSrcDic:
+		ipArpSrcDic[pkt[ARP].psrc] += 1
 	else:
-		macAddressDstDic[macAddressDst] = 1
-	print str(macAddressDst) + " : " + str(macAddressDstDic[macAddressDst])
+		ipArpSrcDic[pkt[ARP].psrc] = 1
+
+	# ARP IP DST
+	if pkt[ARP].pdst in ipArpDstDic:
+		ipArpDstDic[pkt[ARP].pdst] += 1
+	else:
+		ipArpDstDic[pkt[ARP].pdst] = 1
+
+	# Imprimo IP src -> IP dst
+	print str(pkt[ARP].psrc) + " -> " + str(pkt[ARP].pdst)
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
@@ -69,7 +99,7 @@ def S(interfaz = "en1"):
 
 def S1(interfaz = "en1"):
 	signal.signal(signal.SIGINT, S1handler)
-	print "MacAdress destino : #Veces"
+	print "IP From : IP Searching for"
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	signal.pause()
 
