@@ -3,9 +3,11 @@ from scapy.all import *
 import signal
 import sys
 import argparse
+from collections import namedtuple
 
 broadcast = 0
 unicast = 0
+macAddressDic = dict()
 
 # Handler para cuando mandas sigint muestre #broadcast y #unicode
 def Shandler(signal, frame):
@@ -43,10 +45,20 @@ def Scallback(pkt):
 	#print pkt.show()
 
 def S1handler(signal, frame):
-	return
+	global macAddressDic
+	for macAddress in macAddressDic:
+	    print str(macAddress.value[Ether].dst) + " :"
+	    print "   #Veces: " + macAddress.count
+	    print "   Body: " + macAddress.body
 
 def S1callback(pkt):
-	print pkt.show()
+	global macAddressDic
+	MAC = namedtuple('MAC', 'count body')
+	macAddress = pkt[Ether].dst
+	if macAddress in macAddressDic:
+		macAddressDic[macAddress].count = macAddressDic[macAddress].count + 1
+	else:
+		macAddressDic[macAddress] = MAC(1,pkt)
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
