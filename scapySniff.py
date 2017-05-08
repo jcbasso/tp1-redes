@@ -6,7 +6,7 @@ import argparse
 
 broadcast = 0
 unicast = 0
-macAddressDic = dict()
+macAddressDstDic = dict()
 
 # Handler para cuando mandas sigint muestre #broadcast y #unicode
 def Shandler(signal, frame):
@@ -22,12 +22,12 @@ def Scallback(pkt):
 	# IMPRIME: si es un broadcast o unicast
 	global broadcast,unicast
 	if ( str(pkt[Ether].dst) == "ff:ff:ff:ff:ff:ff"):
-		print "S[broadcast]"
 		broadcast = broadcast + 1
+		print "S[broadcast] : " + str(broadcast) 
 	else:
-		print "S[unicast]"
 		unicast = unicast + 1
-	
+		print "S[unicast] : " + str(unicast)
+
 	# IMPRIME: ip.src,ip.dst,ethernet.src,ethernet.dst
 	# try:
 	# 	print "IP: " + str(pkt[IP].src) + " -> " + str(pkt[IP].dst)
@@ -44,30 +44,32 @@ def Scallback(pkt):
 	#print pkt.show()
 
 def S1handler(signal, frame):
-	global macAddressDic
+	global macAddressDstDic
 	print "\n\n\n\n--------------------------------- "    
-	for macAddress in macAddressDic:
-	    print str(macAddress) + " :"
-	    print "   #Veces: " + str(macAddressDic[macAddress])
+	for macAddressDst in macAddressDstDic:
+		print str(macAddressDst) + " :"
+		print "   #Veces: " + str(macAddressDstDic[macAddressDst])
+		print 
 	sys.exit(0)
 
 def S1callback(pkt):
-	global macAddressDic
-	macAddress = pkt[Ether].dst
-	if macAddress in macAddressDic:
-		macAddressDic[macAddress] += 1
+	global macAddressDstDic
+	macAddressDst = pkt[Ether].dst
+	if macAddressDst in macAddressDstDic:
+		macAddressDstDic[macAddressDst] += 1
 	else:
-		macAddressDic[macAddress] = 1
-	print str(macAddress) + " -> " + str(macAddressDic[macAddress])
+		macAddressDstDic[macAddressDst] = 1
+	print str(macAddressDst) + " : " + str(macAddressDstDic[macAddressDst])
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
+	print "S[type] : #Veces"
 	sniff(iface=interfaz, prn=Scallback)
 	signal.pause()
 
 def S1(interfaz = "en1"):
 	signal.signal(signal.SIGINT, S1handler)
-	print "MacAdress -> #Veces"
+	print "MacAdress destino : #Veces"
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	signal.pause()
 
