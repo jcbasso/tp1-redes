@@ -49,14 +49,14 @@ def S1callback(pkt):
 
 
 def S(interfaz = "en1"):
-	#signal.signal(signal.SIGINT, Shandler)
+	signal.signal(signal.SIGINT, Shandler)
 	sniff(iface=interfaz, prn=Scallback)
-	#signal.pause()
-
-def S1(interfaz = "en1"):
-	signal.signal(signal.SIGINT, S1handler)
-	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	signal.pause()
 
-#S()
-S1()
+def S1(interfaz = "en1"):
+	#signal.signal(signal.SIGINT, S1handler)
+	sniff(iface=interfaz, prn=S1callback, filter="arp")
+	#signal.pause()
+
+S()
+#S1()
