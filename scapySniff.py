@@ -60,8 +60,9 @@ def S1(interfaz = "en1"):
 
 parser = argparse.ArgumentParser(description='Sniff packages')
 
-parser.add_argument('interface', help='interface of your network')
-parser.add_argument('--S1', dest='filter', const=S1, default=S, nargs='?', help='run S1 or S (default = S)')
+parser.add_argument('interface', default='en1', nargs='?', help='interface of your network')
+parser.add_argument('--S1', dest='sniffAlgorithm', const=S1, default=S, nargs='?', help='run S1 or S (default = S)')
+
 args = parser.parse_args()
 
-args.filter(args.interface)
+args.sniffAlgorithm(args.interface)
