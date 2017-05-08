@@ -3,7 +3,6 @@ from scapy.all import *
 import signal
 import sys
 import argparse
-from collections import namedtuple
 
 broadcast = 0
 unicast = 0
@@ -47,18 +46,16 @@ def Scallback(pkt):
 def S1handler(signal, frame):
 	global macAddressDic
 	for macAddress in macAddressDic:
-	    print str(macAddress.value[Ether].dst) + " :"
-	    print "   #Veces: " + macAddress.count
-	    print "   Body: " + macAddress.body
+	    print str(macAddress) + " :"
+	    print "   #Veces: " + str(macAddressDic[macAddress])
 
 def S1callback(pkt):
 	global macAddressDic
-	MAC = namedtuple('MAC', 'count body')
 	macAddress = pkt[Ether].dst
 	if macAddress in macAddressDic:
-		macAddressDic[macAddress].count = macAddressDic[macAddress].count + 1
+		macAddressDic[macAddress] += 1
 	else:
-		macAddressDic[macAddress] = MAC(1,pkt)
+		macAddressDic[macAddress] = 1
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
