@@ -7,10 +7,6 @@ import argparse
 broadcast = 0
 unicast = 0
 
-parser = argparse.ArgumentParser(description='Sniff packages')
-
-parser.add_argument('interface', help='interface of your network')
-
 # Handler para cuando mandas sigint muestre #broadcast y #unicode
 def Shandler(signal, frame):
 	global broadcast,unicast
@@ -52,16 +48,20 @@ def S1handler(signal, frame):
 def S1callback(pkt):
 	print pkt.show()
 
-
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
 	sniff(iface=interfaz, prn=Scallback)
 	signal.pause()
 
 def S1(interfaz = "en1"):
-	#signal.signal(signal.SIGINT, S1handler)
+	signal.signal(signal.SIGINT, S1handler)
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
-	#signal.pause()
+	signal.pause()
 
-S(parser.parse_args().interface)
-#S1()
+parser = argparse.ArgumentParser(description='Sniff packages')
+
+parser.add_argument('interface', help='interface of your network')
+parser.add_argument('--S1', dest='filter', const=S1, default=S, nargs='?', help='run S1 or S (default = S)')
+args = parser.parse_args()
+
+args.filter(args.interface)
