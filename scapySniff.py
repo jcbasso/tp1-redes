@@ -23,13 +23,15 @@ def Shandler(signal, frame):
 def Scallback(pkt):
 	# IMPRIME: si es un broadcast o unicast
 	global broadcast,unicast
-	if ( str(pkt[Ether].dst) == "ff:ff:ff:ff:ff:ff"):
-		broadcast = broadcast + 1
-		print "S[broadcast] : " + str(broadcast) 
-	else:
-		unicast = unicast + 1
-		print "S[unicast] : " + str(unicast)
-
+	try:
+		if ( str(pkt[Ether].dst) == "ff:ff:ff:ff:ff:ff"):
+			broadcast = broadcast + 1
+			print "S[broadcast] : " + str(broadcast) 
+		else:
+			unicast = unicast + 1
+			print "S[unicast] : " + str(unicast)
+	except:
+		pass
 	# IMPRIME: ip.src,ip.dst,ethernet.src,ethernet.dst
 	# try:
 	# 	print "IP: " + str(pkt[IP].src) + " -> " + str(pkt[IP].dst)
@@ -43,7 +45,6 @@ def Scallback(pkt):
 	# print
 	
 	# IMPRIME: Todo
-	#print pkt.show()
 
 def S1handler(signal, frame):
 	global macAddressDstDic
@@ -76,20 +77,21 @@ def S1callback(pkt):
 	# 	macAddressDstDic[macAddressDst] = 1
 	#print str(macAddressDst) + " : " + str(macAddressDstDic[macAddressDst])
 	
-	# ARP IP SRC
-	if pkt[ARP].psrc in ipArpSrcDic:
-		ipArpSrcDic[pkt[ARP].psrc] += 1
-	else:
-		ipArpSrcDic[pkt[ARP].psrc] = 1
+	if pkt[ARP].op == 1:
+		# ARP IP SRC
+		if pkt[ARP].psrc in ipArpSrcDic:
+			ipArpSrcDic[pkt[ARP].psrc] += 1
+		else:
+			ipArpSrcDic[pkt[ARP].psrc] = 1
 
-	# ARP IP DST
-	if pkt[ARP].pdst in ipArpDstDic:
-		ipArpDstDic[pkt[ARP].pdst] += 1
-	else:
-		ipArpDstDic[pkt[ARP].pdst] = 1
+		# ARP IP DST
+		if pkt[ARP].pdst in ipArpDstDic:
+			ipArpDstDic[pkt[ARP].pdst] += 1
+		else:
+			ipArpDstDic[pkt[ARP].pdst] = 1
 
-	# Imprimo IP src -> IP dst
-	print str(pkt[ARP].psrc) + " -> " + str(pkt[ARP].pdst)
+		# Imprimo IP src -> IP dst
+		print str(pkt[ARP].psrc) + " -> " + str(pkt[ARP].pdst)
 
 def S(interfaz = "en1"):
 	signal.signal(signal.SIGINT, Shandler)
@@ -102,7 +104,7 @@ def S1(interfaz = "en1"):
 	print "IP From : IP Searching for"
 	sniff(iface=interfaz, prn=S1callback, filter="arp")
 	signal.pause()
-
+	
 parser = argparse.ArgumentParser(description='Sniff packages')
 
 parser.add_argument('interface', default='en1', nargs='?', help='interface of your network')
