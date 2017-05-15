@@ -80,16 +80,10 @@ newMax = 2000
 for key in nodeSizesAsking.keys():
 	nodeSizesAsking[key] = (nodeSizesAsking[key] * newMax) / oldMaxAsking
 	nodeSizesBeingSearch[key] = (nodeSizesBeingSearch[key] * newMax) / oldMaxBeingSearch
-print nodeSizesBeingSearch
-print nodeSizesAsking
+
 pos = nx.spring_layout(g,scale=1) #default to scale=1
 nx.draw(g,pos, with_labels=True,node_size=[v for v in nodeSizesAsking.values()])
 plt.show()
-nx.draw(g,pos, with_labels=True,node_size=[v for v in nodeSizesBeingSearch.values()])
-plt.show()
- 
-# nodes = draw_networkx_nodes(g, pos, frameon=False,node_size=[v * 100 for v in d.values()])
-# nodes.set_edgecolor('white')
-# draw_networkx_edges(g, pos)
-# draw_networkx_labels(g, pos)
+# nx.draw(g,pos, with_labels=True,node_size=[v for v in nodeSizesBeingSearch.values()])
 # plt.show()
+ 
