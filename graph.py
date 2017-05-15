@@ -82,7 +82,7 @@ for key in nodeSizesAsking.keys():
 	nodeSizesBeingSearch[key] = (nodeSizesBeingSearch[key] * newMax) / oldMaxBeingSearch
 
 pos = nx.spring_layout(g,scale=1) #default to scale=1
-nx.draw(g,pos, with_labels=True,node_size=[v for v in nodeSizesAsking.values()])
+nx.draw(g,pos, with_labels=True,edge_color="grey",width=0.5,node_size=[v for v in nodeSizesAsking.values()])
 plt.show()
 # nx.draw(g,pos, with_labels=True,node_size=[v for v in nodeSizesBeingSearch.values()])
 # plt.show()
