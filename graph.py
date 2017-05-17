@@ -22,22 +22,23 @@ for ipFrom, ipSearchingFor in reader:
 	g.add_edge(ipFrom,ipSearchingFor)
 
 nodeSizesAsking = dict()
+nodesTimesAsking = dict()
 nodeSizesBeingSearch = dict()
 d = nx.degree(g)
 for ip in d.keys():
-	if not ip in nodeSizesAsking:
+	if not ip in nodesTimesAsking:
 		try:
-			nodeSizesAsking[ip] = timesAsking[ip]
+			nodesTimesAsking[ip] = timesAsking[ip]
 		except:
-			nodeSizesAsking[ip] = 5
+			nodesTimesAsking[ip] = 5
 
 
 edgeList = ips
 # g.add_edges_from(edgeList)
-oldMaxAsking = max(nodeSizesAsking.values())
+oldMaxAsking = max(nodesTimesAsking.values())
 newMax = 2000
-for key in nodeSizesAsking.keys():
-	nodeSizesAsking[key] = (nodeSizesAsking[key] * newMax) / oldMaxAsking
+for key in nodesTimesAsking.keys():
+	nodeSizesAsking[key] = (nodesTimesAsking[key] * newMax) / oldMaxAsking
 
 colormap = plt.cm.Reds
 pos = nx.spring_layout(g,scale=1) #default to scale=1
@@ -45,7 +46,7 @@ nx.draw(
 	g,
 	pos, 
 	labels = labels,
-	node_color = range(len(g.nodes())),
+	node_color = [v for v in nodesTimesAsking.values()],
 	with_labels=True,
 	edge_color="grey",
 	width=0.5,
