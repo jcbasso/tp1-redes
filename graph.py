@@ -3,11 +3,11 @@ import matplotlib.colors as colors
 from networkx import *
 import csv
 
-reader = csv.reader(open("S1-shopping.csv"), delimiter=",")
+reader = csv.reader(open("S1.csv"), delimiter=",")
 ips = []
 g = nx.Graph()
 
-aPartirDeQueCantidadMostrarLabels = 35
+aPartirDeQueCantidadMostrarLabels = 15
 timesAsking = {
 	"172.17.0.1" : 1708,
 	"172.17.90.43" : 7
@@ -55,7 +55,7 @@ nx.draw(
 	linewidths=0.5,
 	linecolors="blue")
 
-sm = plt.cm.ScalarMappable(cmap=colormap, norm=colors.Normalize(vmin=0, vmax=max(g.degree().values())))
+sm = plt.cm.ScalarMappable(cmap=colormap, norm=colors.Normalize(vmin=0, vmax=max(timesAsking.values())))
 sm._A = []
 plt.colorbar(sm, shrink=0.8)
 plt.show()
